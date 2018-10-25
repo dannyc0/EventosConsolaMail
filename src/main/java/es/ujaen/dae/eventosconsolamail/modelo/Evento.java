@@ -5,18 +5,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
+@Entity
 public class Evento {
+    
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
 	int id;
+        
 	String nombre;
 	String descripcion;
 	String lugar;
 	String fecha;
 	String tipo;
 	int cupo;
-	
+        
+	@ManyToOne
 	public Usuario organizador;
+        
+       
 	public List<Usuario> listaEspera;
+        
+        
 	public Map<String, Usuario> listaInvitados;
 	
 	public Evento() {
