@@ -1,11 +1,9 @@
 package es.ujaen.dae.eventosconsolamail.modelo;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.TreeMap;
 
 public class Evento {
