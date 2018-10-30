@@ -1,5 +1,6 @@
 package es.ujaen.dae.eventosconsolamail.modelo;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,29 +10,33 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
-public class Evento {
-    
-        @Id
-        @GeneratedValue(strategy = GenerationType.AUTO)
+public class Evento{
+	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	int id;
-        
+	
 	String nombre;
 	String descripcion;
 	String lugar;
 	String fecha;
 	String tipo;
 	int cupo;
-        
-	@ManyToOne
+    
+	//@ManyToOne
+	@Transient
 	public Usuario organizador;
-        
-       
+	
+	//@ManyToMany
+	@Transient
 	public List<Usuario> listaEspera;
-        
-        
+	
+	@Transient
 	public Map<String, Usuario> listaInvitados;
 	
 	public Evento() {
@@ -105,8 +110,6 @@ public class Evento {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-
-	
 
 	@Override
 	public String toString() {

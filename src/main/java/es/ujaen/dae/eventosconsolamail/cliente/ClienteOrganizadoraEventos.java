@@ -10,6 +10,7 @@ import java.util.Scanner;
 import org.springframework.context.ApplicationContext;
 
 import es.ujaen.dae.eventosconsolamail.bean.OrganizadoraEventosImp;
+import es.ujaen.dae.eventosconsolamail.dao.EventoDAO;
 import es.ujaen.dae.eventosconsolamail.dto.EventoDTO;
 import es.ujaen.dae.eventosconsolamail.dto.UsuarioDTO;
 import es.ujaen.dae.eventosconsolamail.exception.CamposVaciosException;
