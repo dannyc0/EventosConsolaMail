@@ -10,6 +10,7 @@ import java.util.TreeMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.ujaen.dae.eventosconsolamail.dao.EventoDAO;
 import es.ujaen.dae.eventosconsolamail.dto.EventoDTO;
 import es.ujaen.dae.eventosconsolamail.dto.UsuarioDTO;
 import es.ujaen.dae.eventosconsolamail.exception.CamposVaciosException;
@@ -33,6 +34,8 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 	Map<String, Usuario> usuarios;
 	Map<Integer, Evento> eventos;
 	
+	@Autowired
+	EventoDAO eventoDAO;
 	
 	public OrganizadoraEventosImp() {
 		usuarios = new TreeMap<>();
@@ -97,19 +100,21 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 	public void crearEvento(EventoDTO eventoDTO, long token)  throws CamposVaciosException, SesionNoIniciadaException, FechaInvalidaException{
 		Evento evento = eventoDTO.toEntity();
 		String mensaje = "";
-		
-		if(validarToken(token)) {
-			evento.setOrganizador(usuarios.get(usuariosTokens.get(token)));
-			if(evento.getNombre()!=null&&!evento.getNombre().isEmpty()&&evento.getDescripcion()!=null&&!evento.getDescripcion().isEmpty()&&evento.getFecha()!=null&&!evento.getFecha().isEmpty()&&evento.getLugar()!=null&&!evento.getLugar().isEmpty()&&evento.getCupo()!=0) {
-				evento.setId(eventos.size()+1);
-				eventos.put(evento.getId(), evento);
-				usuarios.get(usuariosTokens.get(token)).eventosOrganizados.put(evento.getId(), evento);
-			}else {
-				throw new CamposVaciosException();
-			}
-		}else {
-			throw new SesionNoIniciadaException();
-		}
+		System.out.println("Busqueda:");
+		System.out.println(eventoDAO.buscar(1).getNombre());
+		eventoDAO.insertar(evento);
+//		if(validarToken(token)) {
+//			evento.setOrganizador(usuarios.get(usuariosTokens.get(token)));
+//			if(evento.getNombre()!=null&&!evento.getNombre().isEmpty()&&evento.getDescripcion()!=null&&!evento.getDescripcion().isEmpty()&&evento.getFecha()!=null&&!evento.getFecha().isEmpty()&&evento.getLugar()!=null&&!evento.getLugar().isEmpty()&&evento.getCupo()!=0) {
+//				evento.setId(eventos.size()+1);
+//				eventos.put(evento.getId(), evento);
+//				usuarios.get(usuariosTokens.get(token)).eventosOrganizados.put(evento.getId(), evento);
+//			}else {
+//				throw new CamposVaciosException();
+//			}
+//		}else {
+//			throw new SesionNoIniciadaException();
+//		}
 	}
 	
 	public void inscribirEvento(EventoDTO eventoDTO, long token) throws InscripcionInvalidaException, SesionNoIniciadaException {

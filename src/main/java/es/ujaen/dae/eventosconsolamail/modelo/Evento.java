@@ -17,8 +17,7 @@ import javax.persistence.Transient;
 @Entity
 public class Evento{
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id;
 	
 	String nombre;
