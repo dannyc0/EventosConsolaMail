@@ -1,19 +1,31 @@
 package es.ujaen.dae.eventosconsolamail.modelo;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 
 //Bean o POJO
-public class Usuario {
+@Entity
+public class Usuario implements Serializable {
+    
+        @Id
 	String dni;
 	String nombre;
 	String correo;
 	String telefono;
 	String password;
-	
+	@OneToMany
 	public Map<Integer,Evento> eventosOrganizados;
-	public Map<Integer,Evento> eventosEspera;
+        
+        @ManyToMany
+        public Map<Integer,Evento> eventosEspera;
+        
+        @ManyToMany
 	public Map<Integer, Evento> eventosInvitado;
 	
 	public Usuario() {

@@ -10,15 +10,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 @Entity
-public class Evento{
+public class Evento implements Serializable{
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	int id;
 	
 	String nombre;
@@ -28,15 +29,13 @@ public class Evento{
 	String tipo;
 	int cupo;
     
-	//@ManyToOne
-	@Transient
+	@ManyToOne
 	public Usuario organizador;
 	
-	//@ManyToMany
-	@Transient
+	@ManyToMany
 	public List<Usuario> listaEspera;
 	
-	@Transient
+	@ManyToMany
 	public Map<String, Usuario> listaInvitados;
 	
 	public Evento() {
