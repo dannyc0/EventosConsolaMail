@@ -73,22 +73,13 @@ public class ClienteOrganizadoraEventos {
 					String respuesta="";
 					try {
 						respuesta = organizadoraEventos.identificarUsuario(dni, bf.readLine())+"";
-						System.out.println("Operación exitosa");
+						System.out.println("Operación exitosa \nSe inició sesión correctamente");
+						sesionIniciada=true;
+						token=Long.parseLong(respuesta);
 					} catch (CamposVaciosException e) {
 						System.out.println("Faltan campos por llenar");
 					} catch (UsuarioNoRegistradoNoEncontradoException e) {
-						System.out.println("Usuario no registrado");
-					}
-					if(respuesta.equals("2")) {
-						System.out.println("\nContraseña incorrecta");
-					}else if(respuesta.equals("1")) {
-						System.out.println("\nUsuario no registrado");
-					}else if(respuesta.equals("0")) {
-						System.out.println("\nCampos incompletos");
-					}else {
-						System.out.println("\nSe inició sesión correctamente");
-						sesionIniciada=true;
-						token=Long.parseLong(respuesta);
+						System.out.println("Usuario no registrado o contraseña incorrecta");
 					}
 				}
 			}else if(opcion==3) {//Eventos
@@ -110,6 +101,7 @@ public class ClienteOrganizadoraEventos {
 						
 						System.out.print("¿Desea inscribirse a algún evento de la lista? Si es así, introduzca el ID del evento, "
 								+ "si no, introduzca 0 para regresar al menú anterior: ");
+//						System.out.println("Temporal. Cancelar evento. ID de evento: ");
 						int inscribirse=Integer.parseInt(bf.readLine());
 						
 						if(inscribirse!=0){//Inscribirse a evento
@@ -121,8 +113,25 @@ public class ClienteOrganizadoraEventos {
 								System.out.println("Operación exitosa");
 							} catch (SesionNoIniciadaException e) {
 								System.out.println("Debes iniciar sesion para inscribirte");
+							} catch (InscripcionInvalidaException e) {
+								System.out.println("Ya perteneces a la lista de invitados, no puedes inscribirte dos veces");
+							} catch (FechaInvalidaException e) {
+								System.out.println("Este evento ya ha sido celebrado");
 							}
 						}
+						
+						//PRUEBA CANCELAR EVENTO (ELIMINAR)
+//						if (inscribirse!=0) {
+//							EventoDTO eventoInscribir = new EventoDTO();
+//							eventoInscribir.setId(inscribirse);
+//							
+//							try {
+//								organizadoraEventos.cancelarEvento(eventoInscribir, token);
+//								System.out.println("Operación exitosa");
+//							} catch (SesionNoIniciadaException e) {
+//								System.out.println("Debes iniciar sesion para cancelar evento");
+//							} 
+//						}
 					}else if(opcion==2) {//Crear evento
 						EventoDTO eventoDTO = new EventoDTO();
 						//ID, nombre, descripcion, fecha, lugar, tipo y cupo son campos obligatorios
@@ -254,13 +263,14 @@ public class ClienteOrganizadoraEventos {
 								EventoDTO eventoCancelar = new EventoDTO();
 								eventoCancelar.setId(cancelar);
 								try {
-									organizadoraEventos.cancelarInscripcion(eventoCancelar, token);
+									organizadoraEventos.pruebaCancelarEspera(eventoCancelar, token);
 									System.out.println("Operación exitosa");
 								} catch (CancelacionInvalidaException e) {
 									System.out.println("No puedes cancelar un evento que ya se celebró");
-								} catch (SesionNoIniciadaException e) {
-									System.out.println("Debes iniciar sesion");
 								}
+//								} catch (SesionNoIniciadaException e) {
+//									System.out.println("Debes iniciar sesion");
+//								}
 							}
 						}else if (opcion==2) {//Celebrado
 							List<EventoDTO> eventosBuscados =  new ArrayList<>();

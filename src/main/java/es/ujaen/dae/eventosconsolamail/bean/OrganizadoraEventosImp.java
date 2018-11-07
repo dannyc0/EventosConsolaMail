@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.ujaen.dae.eventosconsolamail.dao.EventoDAO;
+import es.ujaen.dae.eventosconsolamail.dao.UsuarioDAO;
 import es.ujaen.dae.eventosconsolamail.dto.EventoDTO;
 import es.ujaen.dae.eventosconsolamail.dto.UsuarioDTO;
 import es.ujaen.dae.eventosconsolamail.exception.CamposVaciosException;
@@ -37,6 +38,9 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 	@Autowired
 	EventoDAO eventoDAO;
 	
+	@Autowired
+	UsuarioDAO usuarioDAO;
+	
 	public OrganizadoraEventosImp() {
 		usuarios = new TreeMap<>();
 		eventos = new TreeMap<>();
@@ -59,29 +63,32 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		this.nombre = nombre;
 	}
 	
+	//DAO Listo
 	public void registrarUsuario(UsuarioDTO usuarioDTO, String password) throws CamposVaciosException{
 		String mensaje = "";
 		Usuario usuario = usuarioDTO.toEntity();
+		
+		//Valida campos vacios
 		if(usuario.getDni()!=null&&!usuario.getDni().isEmpty()&&password!=null&&!password.isEmpty()&&usuario.getNombre()!=null&&!usuario.getNombre().isEmpty()) {
 			usuario.setPassword(password);
-			usuarios.put(usuario.getDni(), usuario);
+			usuarioDAO.insertar(usuario);
 		}else
 			throw new CamposVaciosException(); 
 	}
 	
+	//DAO Listo
 	public long identificarUsuario(String dni, String password) throws UsuarioNoRegistradoNoEncontradoException, CamposVaciosException{
 		Usuario usuario;
 		long respuesta = 0;
+		
+		//Valida campos vacios
 		if(!dni.isEmpty()&&!password.isEmpty()) {
-			if(usuarios.containsKey(dni)) {
-				usuario = usuarios.get(dni);
-				if ( usuario.getPassword().equals(password)) {
-					 token = generarToken();
-					 respuesta = token;
-					 usuariosTokens.put(token, dni);
-				}else {
-					respuesta = 0;
-				}
+			usuario = usuarioDAO.buscar(dni);
+			//Si el usuario existe y la contraseña es correcta
+			if(usuario!=null&&usuario.getPassword().equals(password)) {
+				 token = generarToken();
+				 respuesta = token;
+				 usuariosTokens.put(token, dni);
 			}else {
 				throw new UsuarioNoRegistradoNoEncontradoException();
 			}
@@ -97,68 +104,73 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		return false;
 	}
 	
+	//DAO Listo
 	public void crearEvento(EventoDTO eventoDTO, long token)  throws CamposVaciosException, SesionNoIniciadaException, FechaInvalidaException{
 		Evento evento = eventoDTO.toEntity();
 		String mensaje = "";
-		System.out.println("Busqueda:");
-		System.out.println(eventoDAO.buscar(1).getNombre());
-		eventoDAO.insertar(evento);
-//		if(validarToken(token)) {
-//			evento.setOrganizador(usuarios.get(usuariosTokens.get(token)));
-//			if(evento.getNombre()!=null&&!evento.getNombre().isEmpty()&&evento.getDescripcion()!=null&&!evento.getDescripcion().isEmpty()&&evento.getFecha()!=null&&!evento.getFecha().isEmpty()&&evento.getLugar()!=null&&!evento.getLugar().isEmpty()&&evento.getCupo()!=0) {
-//				evento.setId(eventos.size()+1);
-//				eventos.put(evento.getId(), evento);
-//				usuarios.get(usuariosTokens.get(token)).eventosOrganizados.put(evento.getId(), evento);
-//			}else {
-//				throw new CamposVaciosException();
-//			}
-//		}else {
-//			throw new SesionNoIniciadaException();
-//		}
+		//Valida si hay una sesion iniciada
+		if(validarToken(token)) {
+			evento.setOrganizador(usuarioDAO.buscar(usuariosTokens.get(token)));
+			//Valida si hay campos vacios
+			if(evento.getNombre()!=null&&!evento.getNombre().isEmpty()&&evento.getDescripcion()!=null&&!evento.getDescripcion().isEmpty()&&evento.getFecha()!=null&&!evento.getFecha().isEmpty()&&evento.getLugar()!=null&&!evento.getLugar().isEmpty()&&evento.getCupo()!=0) {
+				eventoDAO.insertar(evento);
+			}else {
+				throw new CamposVaciosException();
+			}
+		}else {
+			throw new SesionNoIniciadaException();
+		}
 	}
 	
-	public void inscribirEvento(EventoDTO eventoDTO, long token) throws InscripcionInvalidaException, SesionNoIniciadaException {
+	//DAO Listo
+	public void inscribirEvento(EventoDTO eventoDTO, long token) throws InscripcionInvalidaException, SesionNoIniciadaException, FechaInvalidaException {
+		//Valida si hay una sesion iniciada
 		if(validarToken(token)) {
 			Evento evento = eventoDTO.toEntity();
-			evento = eventos.get(evento.getId());
+			evento = eventoDAO.buscar(evento.getId());
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
 			
-			if(eventos.get(evento.getId()).compararConFechaActual()) {
-				if(evento.listaInvitados.get(usuariosTokens.get(token))==null) {
-					if(evento.listaInvitados.size()<evento.getCupo()) {
-						evento.listaInvitados.put(usuariosTokens.get(token),usuarios.get(usuariosTokens.get(token)) );
-						usuarios.get(usuariosTokens.get(token)).eventosInvitado.put(evento.getId(), evento);
-
+			//Valida si el evento aun no se ha celebrado por la fecha
+			if(eventoDAO.buscar(evento.getId()).compararConFechaActual()) {
+				//Valida si el usuario no esta ya inscrito en la lista de invitados
+				if(!eventoDAO.validarInvitadoLista(evento, usuario)) {
+					//Valida que haya cupo para entrar al evento
+					if(eventoDAO.obtenerSaturacion(evento)<evento.getCupo()) {
+						eventoDAO.inscribirInvitado(evento, usuario);
 					}else {
-						evento.listaEspera.add(usuarios.get(usuariosTokens.get(token)) );
-						usuarios.get(usuariosTokens.get(token)).eventosEspera.put(evento.getId(), evento);
+						eventoDAO.inscribirEspera(evento, usuario);
 					}
 				}else {
 					throw new InscripcionInvalidaException();
 				}
 			}else {
-				throw new InscripcionInvalidaException();
+				throw new FechaInvalidaException();
 			}
-			
 		}else{
 			throw new SesionNoIniciadaException();
 		}
 	}
 	
+	//FALTA LISTA DE ESPERA, Cancelación normal lista
 	public void cancelarInscripcion(EventoDTO eventoDTO, long token)throws CancelacionInvalidaException, SesionNoIniciadaException, UsuarioNoRegistradoNoEncontradoException {
 		if(validarToken(token)) {
 			Evento evento = eventoDTO.toEntity();
-			evento = eventos.get(evento.getId());
+			evento = eventoDAO.buscar(evento.getId());
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
 			
-			if(evento.listaInvitados.containsKey(usuariosTokens.get(token))) {
-				if(eventos.get(evento.getId()).compararConFechaActual()) {
-					evento.listaInvitados.remove(usuariosTokens.get(token));
-					evento.listaInvitados.put(evento.listaEspera.get(0).getDni(), evento.listaEspera.get(0));
-					
-					usuarios.get(usuariosTokens.get(token)).eventosInvitado.remove(evento.getId());
-					usuarios.get(evento.listaEspera.get(0).getDni()).eventosInvitado.put(evento.getId(), evento);
-					usuarios.get(evento.listaEspera.get(0).getDni()).eventosEspera.remove(evento.getId(), evento);
+			//Valida si el usuario se encuentra en la lista de invitados
+			if(eventoDAO.validarInvitadoLista(evento, usuario)) {
+				//Valida que no se haya celebrado aun el evento
+				if(eventoDAO.buscar(evento.getId()).compararConFechaActual()) {
+					eventoDAO.cancelarInvitado(evento, usuario);
+//					evento.listaInvitados.remove(usuariosTokens.get(token));
+//					evento.listaInvitados.put(evento.listaEspera.get(0).getDni(), evento.listaEspera.get(0));
+//					
+//					usuarios.get(usuariosTokens.get(token)).eventosInvitado.remove(evento.getId());
+//					usuarios.get(evento.listaEspera.get(0).getDni()).eventosInvitado.put(evento.getId(), evento);
+//					usuarios.get(evento.listaEspera.get(0).getDni()).eventosEspera.remove(evento.getId(), evento);
 
-					evento.listaEspera.remove(0);
+//					evento.listaEspera.remove(0);
 					
 				}else {
 					throw new CancelacionInvalidaException();
@@ -171,22 +183,32 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		}
 	}
 	
-	public List<EventoDTO> buscarEvento(String attr) {
-		ArrayList<EventoDTO> eventosBuscados = new ArrayList<>();
+	public void pruebaCancelarEspera(EventoDTO eventoDTO, long token) {
+		Evento evento = eventoDTO.toEntity();
+		evento = eventoDAO.buscar(evento.getId());
+		Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
 		
-		for(Evento evento : eventos.values()) {
-			if(evento.getTipo().toLowerCase().equals(attr.toLowerCase())||evento.getDescripcion().toLowerCase().contains(attr.toLowerCase()))
-				eventosBuscados.add(new EventoDTO(evento));
-		}return eventosBuscados;
+		eventoDAO.cancelarEspera(evento, usuario);
 	}
 	
+	//DAO Listo
+	public List<EventoDTO> buscarEvento(String attr) {
+		List<Evento> eventosBuscados = eventoDAO.buscarEventoPorTipoYDescripcion(attr);
+		List<EventoDTO> eventosBuscadosDTO = new ArrayList<>();
+		
+		for(Evento evento : eventosBuscados) {
+			eventosBuscadosDTO.add(new EventoDTO(evento));
+		}
+		return eventosBuscadosDTO;
+	}
+	
+	//DAO Listo
 	public void cancelarEvento(EventoDTO eventoDTO, long token)throws CancelacionInvalidaException, SesionNoIniciadaException {
 		Evento evento = eventoDTO.toEntity();
 		if(validarToken(token)) {
-			if(eventos.get(evento.getId()).compararConFechaActual()) {
-				if(eventos.get(evento.getId()).getOrganizador().getDni().equals(usuariosTokens.get(token))) {
-					eventos.remove(evento.getId());
-					usuarios.get(usuariosTokens.get(token)).eventosOrganizados.remove(evento.getId());
+			if(eventoDAO.buscar(evento.getId()).compararConFechaActual()) {
+				if(eventoDAO.obtenerOrganizadorEvento(evento.getId()).getDni().equals(usuariosTokens.get(token))) {
+					eventoDAO.borrar(evento);
 				}else {
 					throw new CancelacionInvalidaException();
 				}
@@ -198,11 +220,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		}
 	}
 	
+	//DAO listo
 	public List<EventoDTO> listarEventoInscritoCelebrado(long token) {
 		List<EventoDTO> eventosInscritosCelebrados = new ArrayList<EventoDTO>(); 
 		if(validarToken(token)) {
-			Usuario usuario= usuarios.get(usuariosTokens.get(token));
-			for (Evento evento : usuario.eventosInvitado.values()) {
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			for (Evento evento : eventoDAO.listarEventoInscrito(usuario)) {
 				if(!evento.compararConFechaActual()) {
 					eventosInscritosCelebrados.add(new EventoDTO(evento));
 				}
@@ -211,11 +234,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		return eventosInscritosCelebrados;
 	}
 
+	//DAO Listo
 	public List<EventoDTO> listarEventoInscritoPorCelebrar(long token) {
 		List<EventoDTO> eventosInscritosPorCelebrar = new ArrayList<EventoDTO>(); 
 		if(validarToken(token)) {
-			Usuario usuario= usuarios.get(usuariosTokens.get(token));
-			for (Evento evento : usuario.eventosInvitado.values()) {
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			for (Evento evento : eventoDAO.listarEventoInscrito(usuario)) {
 				if(evento.compararConFechaActual()) {
 					eventosInscritosPorCelebrar.add(new EventoDTO(evento));
 				}
@@ -224,11 +248,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		return eventosInscritosPorCelebrar;
 	}
 
+	//DAO Listo
 	public List<EventoDTO> listarEventoEsperaPorCelebrar(long token) {
 		List<EventoDTO> eventosEsperaPorCelebrar = new ArrayList<EventoDTO>(); 
 		if(validarToken(token)) {
-			Usuario usuario= usuarios.get(usuariosTokens.get(token));
-			for (Evento evento : usuario.eventosEspera.values()) {
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			for (Evento evento : eventoDAO.listarEventoEspera(usuario)) {
 				if(evento.compararConFechaActual()) {
 					eventosEsperaPorCelebrar.add(new EventoDTO(evento));
 				}
@@ -237,11 +262,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		return eventosEsperaPorCelebrar;
 	}
 	
+	//DAO Listo
 	public List<EventoDTO> listarEventoEsperaCelebrado(long token) {
 		List<EventoDTO> eventosEsperaCelebrado = new ArrayList<EventoDTO>(); 
 		if(validarToken(token)) {
-			Usuario usuario= usuarios.get(usuariosTokens.get(token));
-			for (Evento evento : usuario.eventosEspera.values()) {
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			for (Evento evento : eventoDAO.listarEventoEspera(usuario)) {
 				if(!evento.compararConFechaActual()) {
 					eventosEsperaCelebrado.add(new EventoDTO(evento));
 				}
@@ -250,11 +276,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		return eventosEsperaCelebrado;
 	}
 
+	//DAO Listo
 	public List<EventoDTO> listarEventoOrganizadoCelebrado(long token) {
 		List<EventoDTO> eventosOrganizadosCelebrados = new ArrayList<EventoDTO>(); 
 		if(validarToken(token)) {
-			Usuario usuario= usuarios.get(usuariosTokens.get(token));
-			for (Evento evento : usuario.eventosOrganizados.values()) {
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			for (Evento evento : eventoDAO.listarEventoOrganizado(usuario)) {
 				if(!evento.compararConFechaActual()) {
 					eventosOrganizadosCelebrados.add(new EventoDTO(evento));
 				}
@@ -263,11 +290,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		return eventosOrganizadosCelebrados;
 	}
 	
+	//DAO Listo
 	public List<EventoDTO> listarEventoOrganizadoPorCelebrar(long token) {
 		List<EventoDTO> eventosOrganizadosPorCelebrar = new ArrayList<EventoDTO>(); 
 		if(validarToken(token)) {
-			Usuario usuario= usuarios.get(usuariosTokens.get(token));
-			for (Evento evento : usuario.eventosOrganizados.values()) {
+			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			for (Evento evento : eventoDAO.listarEventoOrganizado(usuario)) {
 				if(evento.compararConFechaActual()) {
 					eventosOrganizadosPorCelebrar.add(new EventoDTO(evento));
 				}

@@ -27,14 +27,6 @@ import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 @SpringBootApplication
 public class ServidorOrganizadoraEventos {
 	
-//	@Bean
-//	TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
-//		TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
-//		transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_UNCOMMITTED);
-//		this.transactionTemplate(transactionManager).setTimeout(30);
-//		return transactionTemplate;
-//	}
-	
 	public static void main(String[] args) throws IOException {
 		SpringApplication servidor = new SpringApplication(ServidorOrganizadoraEventos.class);
 		ApplicationContext ctx = servidor.run(args);

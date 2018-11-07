@@ -1,37 +1,44 @@
 package es.ujaen.dae.eventosconsolamail.modelo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
-//Bean o POJO
 @Entity
 public class Usuario implements Serializable {
     
-        @Id
+	@Id
 	String dni;
 	String nombre;
 	String correo;
 	String telefono;
 	String password;
-	@OneToMany
-	public Map<Integer,Evento> eventosOrganizados;
+	
+	@OneToMany(mappedBy="organizador",fetch=FetchType.LAZY)
+	public List<Evento> eventosOrganizados;
         
-        @ManyToMany
-        public Map<Integer,Evento> eventosEspera;
+    @ManyToMany(mappedBy="listaEspera")
+    public List<Evento> eventosEspera;
         
-        @ManyToMany
-	public Map<Integer, Evento> eventosInvitado;
+    @ManyToMany(mappedBy="listaInvitados")
+	public List<Evento> eventosInvitado;
 	
 	public Usuario() {
-		eventosOrganizados=new TreeMap<>();
-		eventosEspera=new TreeMap<>();
-		eventosInvitado=new TreeMap<>();
+		eventosOrganizados= new ArrayList<>();
+		eventosEspera= new ArrayList<>();
+		eventosInvitado= new ArrayList<>();
 	}
 
 	public Usuario(String dni, String nombre, String correo, String telefono, String password) {
@@ -40,10 +47,9 @@ public class Usuario implements Serializable {
 		this.correo = correo;
 		this.telefono = telefono;
 		this.password = password;
-		eventosOrganizados=new TreeMap<>();
-		eventosEspera=new TreeMap<>();
-		eventosInvitado=new TreeMap<>();
-		
+		eventosOrganizados=new ArrayList<>();
+		eventosEspera=new ArrayList<>();
+		eventosInvitado=new ArrayList<>();
 	}
 
 	public String getDni() {
@@ -84,6 +90,30 @@ public class Usuario implements Serializable {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+	
+	public List<Evento> getEventosOrganizados() {
+		return eventosOrganizados;
+	}
+
+	public void setEventosOrganizados(List<Evento> eventosOrganizados) {
+		this.eventosOrganizados = eventosOrganizados;
+	}
+
+	public List<Evento> getEventosEspera() {
+		return eventosEspera;
+	}
+
+	public void setEventosEspera(List<Evento> eventosEspera) {
+		this.eventosEspera = eventosEspera;
+	}
+
+	public List<Evento> getEventosInvitado() {
+		return eventosInvitado;
+	}
+
+	public void setEventosInvitado(List<Evento> eventosInvitado) {
+		this.eventosInvitado = eventosInvitado;
 	}
 
 	@Override

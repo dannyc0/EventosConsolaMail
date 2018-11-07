@@ -1,85 +1,55 @@
 package es.ujaen.dae.eventosconsolamail.dao;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
 
-//Bean o POJO
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.ujaen.dae.eventosconsolamail.exception.ErrorCreacionEvento;
+import es.ujaen.dae.eventosconsolamail.modelo.Evento;
+import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
+
+@Repository
+@Transactional(propagation=Propagation.REQUIRED)
 public class UsuarioDAO {
-	String dni;
-	String nombre;
-	String correo;
-	String telefono;
-	String password;
 	
-	public Map<Integer,EventoDAO> eventosOrganizados;
-	public Map<Integer,EventoDAO> eventosEspera;
-	public Map<Integer, EventoDAO> eventosInvitado;
+	@PersistenceContext 
+	EntityManager em;
 	
-	public UsuarioDAO() {
-		eventosOrganizados=new TreeMap<>();
-		eventosEspera=new TreeMap<>();
-		eventosInvitado=new TreeMap<>();
-	}
-
-	public UsuarioDAO(String dni, String nombre, String correo, String telefono, String password) {
-		this.dni = dni;
-		this.nombre = nombre;
-		this.correo = correo;
-		this.telefono = telefono;
-		this.password = password;
-		eventosOrganizados=new TreeMap<>();
-		eventosEspera=new TreeMap<>();
-		eventosInvitado=new TreeMap<>();
-		
-	}
-
-	public String getDni() {
-		return dni;
-	}
-
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
-	public String getCorreo() {
-		return correo;
-	}
-
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
-
-	public String getTelefono() {
-		return telefono;
-	}
-
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	@Override
-	public String toString() {
-		return "Usuario [dni=" + dni + ", nombre=" + nombre + ", correo=" + correo + ", telefono=" + telefono
-				+ ", password=" + password + ", eventosOrganizados=" + eventosOrganizados + ", eventosEspera="
-				+ eventosEspera + ", eventosInvitado=" + eventosInvitado + "]";
+	public UsuarioDAO(){}
+	
+	//Buscar evento
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
+	public Usuario buscar(String dni) {
+		return em.find(Usuario.class, dni);
 	}
 	
+	//Crear evento
+	public void insertar(Usuario usuario) {
+		try {
+			em.persist(usuario);
+			em.flush();
+		} catch(Exception e) {
+			throw new ErrorCreacionEvento();
+		}
+	}
+	
+	//Actualizar evento
+	public void actualizar(Usuario usuario) {
+		em.merge(usuario);
+	}
+	
+	//Borrar evento
+	public void borrar(Usuario usuario) {
+		em.remove(em.merge(usuario));
+	}
 	
 }

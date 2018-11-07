@@ -24,7 +24,7 @@ public interface OrganizadoraEventosService {
 	public long identificarUsuario(String dni, String password) throws UsuarioNoRegistradoNoEncontradoException, CamposVaciosException;//Probado
 	public boolean cerrarSesion(long token);//Probado
 	public void crearEvento(EventoDTO eventoDTO, long token) throws CamposVaciosException, SesionNoIniciadaException, FechaInvalidaException;//Probado
-	public void inscribirEvento(EventoDTO eventoDTO, long token) throws InscripcionInvalidaException, SesionNoIniciadaException;//Probado
+	public void inscribirEvento(EventoDTO eventoDTO, long token) throws InscripcionInvalidaException, SesionNoIniciadaException, FechaInvalidaException;//Probado
 	public void cancelarInscripcion(EventoDTO eventoDTO, long token)throws CancelacionInvalidaException, SesionNoIniciadaException, UsuarioNoRegistradoNoEncontradoException;//Probado
 	public List<EventoDTO> buscarEvento(String attr);//Probado
 	public void cancelarEvento(EventoDTO eventoDTO,long token)throws CancelacionInvalidaException, SesionNoIniciadaException;//Probado
@@ -34,6 +34,7 @@ public interface OrganizadoraEventosService {
 	public List<EventoDTO> listarEventoEsperaCelebrado(long token); //Probado
 	public List<EventoDTO> listarEventoOrganizadoCelebrado(long token);//Probado
 	public List<EventoDTO> listarEventoOrganizadoPorCelebrar(long token);//Probado
+	public void pruebaCancelarEspera(EventoDTO eventoCancelar, long token);
 	
 	/*
 	 * Corregido:

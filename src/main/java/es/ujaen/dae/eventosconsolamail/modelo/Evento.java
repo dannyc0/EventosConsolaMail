@@ -3,14 +3,19 @@ package es.ujaen.dae.eventosconsolamail.modelo;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
@@ -30,17 +35,20 @@ public class Evento implements Serializable{
 	int cupo;
     
 	@ManyToOne
+	@JoinColumn(name="organizador")
 	public Usuario organizador;
 	
-	@ManyToMany
-	public List<Usuario> listaEspera;
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name = "evento_espera", joinColumns = @JoinColumn(name = "evento_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "espera_dni", referencedColumnName = "dni"))
+	public Map<Date,Usuario> listaEspera;
 	
-	@ManyToMany
-	public Map<String, Usuario> listaInvitados;
+	@ManyToMany(fetch=FetchType.LAZY)
+	@JoinTable(name = "evento_invitado", joinColumns = @JoinColumn(name = "evento_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "invitado_dni", referencedColumnName = "dni"))
+	public List<Usuario> listaInvitados;
 	
 	public Evento() {
-		listaEspera = new ArrayList<>();
-		listaInvitados = new TreeMap<>();
+		listaEspera = new TreeMap<>();
+		listaInvitados = new ArrayList<>();
 	}
 	
 	public Evento(String nombre, String descripcion, String lugar, String fecha, String tipo, int cupo,Usuario organizador) {
@@ -51,8 +59,8 @@ public class Evento implements Serializable{
 		this.tipo = tipo;
 		this.cupo = cupo;
 		this.organizador = organizador;
-		listaEspera = new ArrayList<>();
-		listaInvitados = new TreeMap<>();
+		listaEspera = new TreeMap<>();
+		listaInvitados = new ArrayList<>();
 	}
 
 	public int getId() {
@@ -108,6 +116,22 @@ public class Evento implements Serializable{
 
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
+	}
+
+	public Map<Date, Usuario> getListaEspera() {
+		return listaEspera;
+	}
+
+	public void setListaEspera(Map<Date, Usuario> listaEspera) {
+		this.listaEspera = listaEspera;
+	}
+
+	public List<Usuario> getListaInvitados() {
+		return listaInvitados;
+	}
+
+	public void setListaInvitados(List<Usuario> listaInvitados) {
+		this.listaInvitados = listaInvitados;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  *
  * @author EnriqueS
  */
-public class CancelacionInvalidaException extends Exception {
+public class CancelacionInvalidaException extends RuntimeException {
 
     public CancelacionInvalidaException() {
     }

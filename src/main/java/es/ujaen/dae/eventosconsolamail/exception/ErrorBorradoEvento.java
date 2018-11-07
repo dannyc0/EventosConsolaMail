@@ -6,12 +6,12 @@
 package es.ujaen.dae.eventosconsolamail.exception;
 
 /**
- *
- * @author DanielaHernandez
- */
-public class ErrorCreacionEvento extends RuntimeException {
+*
+* @author DanielaHernandez
+*/
+public class ErrorBorradoEvento extends RuntimeException {
 
-    public ErrorCreacionEvento() {
+    public ErrorBorradoEvento() {
     }
 
 }
