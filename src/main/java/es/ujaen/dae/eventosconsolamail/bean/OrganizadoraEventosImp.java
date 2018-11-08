@@ -151,26 +151,23 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		}
 	}
 	
-	//FALTA LISTA DE ESPERA, Cancelación normal lista
+	//DAO Listo
 	public void cancelarInscripcion(EventoDTO eventoDTO, long token)throws CancelacionInvalidaException, SesionNoIniciadaException, UsuarioNoRegistradoNoEncontradoException {
 		if(validarToken(token)) {
 			Evento evento = eventoDTO.toEntity();
 			evento = eventoDAO.buscar(evento.getId());
-			Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
+			Usuario usuarioCancela = usuarioDAO.buscar(usuariosTokens.get(token));
 			
 			//Valida si el usuario se encuentra en la lista de invitados
-			if(eventoDAO.validarInvitadoLista(evento, usuario)) {
+			if(eventoDAO.validarInvitadoLista(evento, usuarioCancela)) {
 				//Valida que no se haya celebrado aun el evento
 				if(eventoDAO.buscar(evento.getId()).compararConFechaActual()) {
-					eventoDAO.cancelarInvitado(evento, usuario);
-//					evento.listaInvitados.remove(usuariosTokens.get(token));
-//					evento.listaInvitados.put(evento.listaEspera.get(0).getDni(), evento.listaEspera.get(0));
-//					
-//					usuarios.get(usuariosTokens.get(token)).eventosInvitado.remove(evento.getId());
-//					usuarios.get(evento.listaEspera.get(0).getDni()).eventosInvitado.put(evento.getId(), evento);
-//					usuarios.get(evento.listaEspera.get(0).getDni()).eventosEspera.remove(evento.getId(), evento);
-
-//					evento.listaEspera.remove(0);
+					Object[] datosListaEspera = eventoDAO.obtenerSiguienteDeListaEspera(evento);
+					Usuario usuarioEntra = usuarioDAO.buscar(datosListaEspera[1].toString());
+					
+					eventoDAO.cancelarInvitado(evento, usuarioCancela);
+					eventoDAO.sacarDeListaDeEspera(datosListaEspera, evento);
+					eventoDAO.inscribirInvitado(evento, usuarioEntra);
 					
 				}else {
 					throw new CancelacionInvalidaException();
@@ -183,12 +180,13 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 		}
 	}
 	
-	public void pruebaCancelarEspera(EventoDTO eventoDTO, long token) {
+	//DAO Listo
+	public void cancelarListaEspera(EventoDTO eventoDTO, long token)throws CancelacionInvalidaException {
 		Evento evento = eventoDTO.toEntity();
 		evento = eventoDAO.buscar(evento.getId());
 		Usuario usuario = usuarioDAO.buscar(usuariosTokens.get(token));
 		
-		eventoDAO.cancelarEspera(evento, usuario);
+		eventoDAO.sacarDeListaDeEspera(eventoDAO.obtenerDatosListaEsperaParaCancelar(evento, usuario), evento);
 	}
 	
 	//DAO Listo
@@ -319,4 +317,5 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService{
 			return true;
 		return false;
 	}
+
 }

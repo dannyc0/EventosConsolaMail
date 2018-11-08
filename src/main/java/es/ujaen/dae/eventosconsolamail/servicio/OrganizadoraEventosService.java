@@ -34,7 +34,7 @@ public interface OrganizadoraEventosService {
 	public List<EventoDTO> listarEventoEsperaCelebrado(long token); //Probado
 	public List<EventoDTO> listarEventoOrganizadoCelebrado(long token);//Probado
 	public List<EventoDTO> listarEventoOrganizadoPorCelebrar(long token);//Probado
-	public void pruebaCancelarEspera(EventoDTO eventoCancelar, long token);
+	public void cancelarListaEspera(EventoDTO eventoDTO, long token)throws CancelacionInvalidaException;
 	
 	/*
 	 * Corregido:

@@ -263,7 +263,7 @@ public class ClienteOrganizadoraEventos {
 								EventoDTO eventoCancelar = new EventoDTO();
 								eventoCancelar.setId(cancelar);
 								try {
-									organizadoraEventos.pruebaCancelarEspera(eventoCancelar, token);
+									organizadoraEventos.cancelarListaEspera(eventoCancelar, token);
 									System.out.println("Operación exitosa");
 								} catch (CancelacionInvalidaException e) {
 									System.out.println("No puedes cancelar un evento que ya se celebró");

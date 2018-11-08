@@ -4,12 +4,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,21 +99,56 @@ public class EventoDAO {
 		eventoInscribir.getListaInvitados().remove(usuarioInscribir);
 	}
 	
-	//Quitar de lista espera
-	@Transactional(noRollbackFor = Exception.class)
-	public int cancelarEspera(Evento evento, Usuario usuario) {
+	//Obtener quien es el siguiente de la lista de espera
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
+	public Object[] obtenerSiguienteDeListaEspera(Evento evento) {
 		//Transaccion activa
 		Evento eventoEspera = em.find(Evento.class,evento.getId());
-		Usuario usuarioEspera = em.find(Usuario.class,usuario.getDni());
-		//"SELECT e FROM Evento e JOIN e.listaEspera le WHERE ( KEY(le) = :llave and m = :valor )"
+		Object[] datosMap = null;
 		try {
-			int borrados = em.createQuery("DELETE FROM Evento e WHERE e IN (SELECT ev FROM Evento ev JOIN ev.listaEspera le WHERE ev.id = :id AND le.dni = :dni)", Evento.class)
+			datosMap = em.createQuery("SELECT KEY(map), VALUE(map).dni FROM Evento e INNER JOIN e.listaEspera map WHERE e.id = :id ORDER BY KEY(map) ASC",Object[].class)
+					.setParameter("id" , eventoEspera.getId())
+					.setMaxResults(1)
+					.getSingleResult();
+		} catch (Exception e) {
+			System.out.println("Error");
+		}
+		
+		return datosMap;
+	}
+	
+	//Obtener datos de alguien que desea cancelar su inscripcion a la lista de espera
+	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
+	public Object[] obtenerDatosListaEsperaParaCancelar(Evento evento, Usuario usuario) {
+		//Transaccion activa
+		Evento eventoEspera = em.find(Evento.class,evento.getId());
+		Usuario usuarioEspera = em.find(Usuario.class, usuario.getDni());
+		Object[] datosMap = null;
+		try {
+			datosMap = em.createQuery("SELECT KEY(map), VALUE(map).dni FROM Evento e INNER JOIN e.listaEspera map WHERE e.id = :id AND VALUE(map).dni = :dni",Object[].class)
 					.setParameter("id" , eventoEspera.getId())
 					.setParameter("dni" , usuarioEspera.getDni())
-					.executeUpdate();
-			return borrados;
-		} catch (Exception e) {}
-		return -1;
+					.setMaxResults(1)
+					.getSingleResult();
+
+		} catch (Exception e) {
+			System.out.println("Error");
+		}
+		
+		return datosMap;
+	}
+	
+	//Sacarlo de la lista de espera
+	public void sacarDeListaDeEspera(Object[] datosMap, Evento evento) {
+		Evento eventoEspera = em.find(Evento.class,evento.getId());
+		Usuario usuarioSacar = em.find(Usuario.class, datosMap[1]);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = null;
+		try {
+			date = format.parse(datosMap[0].toString().replaceAll("\\.\\d+", ""));
+		} catch (ParseException e) {}
+		
+		eventoEspera.getListaEspera().remove(date, usuarioSacar);
 	}
 	
 	//Inscribir lista espera
