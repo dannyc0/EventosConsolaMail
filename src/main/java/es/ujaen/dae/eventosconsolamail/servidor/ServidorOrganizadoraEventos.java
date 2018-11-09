@@ -11,10 +11,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import es.ujaen.dae.eventosconsolamail.cliente.ClienteOrganizadoraEventos;
+import org.springframework.cache.annotation.EnableCaching;
 
 @EnableAutoConfiguration
 @EnableConfigurationProperties
-
+@EnableCaching
 @ComponentScan({"es.ujaen.dae.eventosconsolamail.bean","es.ujaen.dae.eventosconsolamail.dao"})
 @EntityScan(basePackages= {"es.ujaen.dae.eventosconsolamail.modelo"})
 @SpringBootApplication

@@ -1,34 +1,29 @@
 package es.ujaen.dae.eventosconsolamail.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ujaen.dae.eventosconsolamail.exception.ErrorCreacionEvento;
-import es.ujaen.dae.eventosconsolamail.exception.SesionNoIniciadaException;
 import es.ujaen.dae.eventosconsolamail.modelo.Evento;
 import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 import javax.persistence.LockModeType;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 
 @Repository
 @Transactional(propagation=Propagation.REQUIRED)
+@CacheConfig(cacheNames = "cacheEvento")
 public class EventoDAO {
 	
 	@PersistenceContext 
@@ -37,12 +32,14 @@ public class EventoDAO {
 	public EventoDAO() {}
 	
 	//Buscar evento
+        @Cacheable
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public Evento buscar(int id) {
 		return em.find(Evento.class, id);
 	}
 	
 	//Buscar evento
+        @Cacheable
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public List<Evento> buscarEventoPorTipoYDescripcion(String attr) {
 		List<Evento> eventosBuscados = em.createQuery("SELECT e FROM Evento e WHERE e.tipo = :tipo OR e.descripcion LIKE :desc", Evento.class)
@@ -52,7 +49,8 @@ public class EventoDAO {
 	
 		return eventosBuscados;
 	}
-	
+        
+
 	//Obtener organizador del evento
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public Usuario obtenerOrganizadorEvento(int id) {
@@ -125,6 +123,7 @@ public class EventoDAO {
 	}
 	
 	//Obtener datos de alguien que desea cancelar su inscripcion a la lista de espera
+       
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public Object[] obtenerDatosListaEsperaParaCancelar(Evento evento, Usuario usuario) {
 		//Transaccion activa
@@ -174,6 +173,7 @@ public class EventoDAO {
 	}
 	
 	//Validar invitado que no se repita en la lista
+        @Cacheable
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public boolean validarInvitadoLista(Evento evento, Usuario usuario) {
 		//Transaccion activa
@@ -209,6 +209,7 @@ public class EventoDAO {
 	}
 	
 	//Lista de eventos en espera
+        @Cacheable
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public List<Evento> listarEventoEspera(Usuario usuario) {
 		//Transaccion activa
@@ -225,6 +226,7 @@ public class EventoDAO {
 	}
 	
 	//Lista de eventos inscritos
+        @Cacheable
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public List<Evento> listarEventoInscrito(Usuario usuario) {
 		//Transaccion activa
@@ -241,6 +243,7 @@ public class EventoDAO {
 	}
 	
 	//Lista de eventos organizados
+        @Cacheable
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public List<Evento> listarEventoOrganizado(Usuario usuario) {
 		//Transaccion activa
