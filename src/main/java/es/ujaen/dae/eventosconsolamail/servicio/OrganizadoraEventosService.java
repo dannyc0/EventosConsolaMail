@@ -1,8 +1,6 @@
 package es.ujaen.dae.eventosconsolamail.servicio;
 
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import es.ujaen.dae.eventosconsolamail.dto.EventoDTO;
 import es.ujaen.dae.eventosconsolamail.dto.UsuarioDTO;

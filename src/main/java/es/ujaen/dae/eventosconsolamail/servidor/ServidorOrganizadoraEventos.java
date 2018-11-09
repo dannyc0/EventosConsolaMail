@@ -8,20 +8,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import es.ujaen.dae.eventosconsolamail.cliente.ClienteOrganizadoraEventos;
-import es.ujaen.dae.eventosconsolamail.dao.EventoDAO;
-import es.ujaen.dae.eventosconsolamail.modelo.Evento;
-import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 
 @EnableAutoConfiguration
 @EnableConfigurationProperties
+
 @ComponentScan({"es.ujaen.dae.eventosconsolamail.bean","es.ujaen.dae.eventosconsolamail.dao"})
 @EntityScan(basePackages= {"es.ujaen.dae.eventosconsolamail.modelo"})
 @SpringBootApplication

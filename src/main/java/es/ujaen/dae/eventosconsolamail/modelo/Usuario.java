@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 @Entity
 public class Usuario implements Serializable {
@@ -34,7 +35,10 @@ public class Usuario implements Serializable {
         
     @ManyToMany(mappedBy="listaInvitados")
 	public List<Evento> eventosInvitado;
-	
+    
+    @Version
+    private int versionu;
+    
 	public Usuario() {
 		eventosOrganizados= new ArrayList<>();
 		eventosEspera= new ArrayList<>();

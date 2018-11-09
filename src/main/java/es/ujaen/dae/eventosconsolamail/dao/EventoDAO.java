@@ -25,6 +25,7 @@ import es.ujaen.dae.eventosconsolamail.exception.ErrorCreacionEvento;
 import es.ujaen.dae.eventosconsolamail.exception.SesionNoIniciadaException;
 import es.ujaen.dae.eventosconsolamail.modelo.Evento;
 import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
+import javax.persistence.LockModeType;
 
 @Repository
 @Transactional(propagation=Propagation.REQUIRED)
@@ -64,6 +65,7 @@ public class EventoDAO {
 	//Crear evento
 	public void insertar(Evento evento) {
 		try {
+                    
 			em.persist(evento);
 			em.flush();
 		} catch(Exception e) {
@@ -73,7 +75,7 @@ public class EventoDAO {
 	
 	//Actualizar evento
 	public void actualizar(Evento evento) {
-		em.merge(evento);
+            	em.merge(evento);
 	}
 	
 	//Borrar evento
@@ -86,24 +88,29 @@ public class EventoDAO {
 		//Transaccion activa
 		Evento eventoInscribir = em.find(Evento.class,evento.getId());
 		Usuario usuarioInscribir = em.find(Usuario.class,usuario.getDni());
-		
+		em.lock(eventoInscribir, LockModeType.OPTIMISTIC);
+                em.lock(usuarioInscribir,LockModeType.OPTIMISTIC);
 		eventoInscribir.getListaInvitados().add(usuarioInscribir);
 	}
 	
 	//Cancelar de lista invitado
 	public void cancelarInvitado(Evento evento, Usuario usuario) {
 		//Transaccion activa
+
 		Evento eventoInscribir = em.find(Evento.class,evento.getId());
 		Usuario usuarioInscribir = em.find(Usuario.class,usuario.getDni());
-		
+		em.lock(eventoInscribir, LockModeType.OPTIMISTIC);
+                em.lock(usuarioInscribir,LockModeType.OPTIMISTIC);
 		eventoInscribir.getListaInvitados().remove(usuarioInscribir);
+
 	}
 	
 	//Obtener quien es el siguiente de la lista de espera
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public Object[] obtenerSiguienteDeListaEspera(Evento evento) {
 		//Transaccion activa
-		Evento eventoEspera = em.find(Evento.class,evento.getId());
+		
+                Evento eventoEspera = em.find(Evento.class,evento.getId());
 		Object[] datosMap = null;
 		try {
 			datosMap = em.createQuery("SELECT KEY(map), VALUE(map).dni FROM Evento e INNER JOIN e.listaEspera map WHERE e.id = :id ORDER BY KEY(map) ASC",Object[].class)
@@ -142,6 +149,8 @@ public class EventoDAO {
 	public void sacarDeListaDeEspera(Object[] datosMap, Evento evento) {
 		Evento eventoEspera = em.find(Evento.class,evento.getId());
 		Usuario usuarioSacar = em.find(Usuario.class, datosMap[1]);
+                em.lock(eventoEspera, LockModeType.OPTIMISTIC);
+                em.lock(usuarioSacar,LockModeType.OPTIMISTIC);
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
 		try {
@@ -154,9 +163,10 @@ public class EventoDAO {
 	//Inscribir lista espera
 	public void inscribirEspera(Evento evento, Usuario usuario) {
 		//Transaccion activa
-		Evento eventoInscribir = em.find(Evento.class,evento.getId());
+                Evento eventoInscribir = em.find(Evento.class,evento.getId());
 		Usuario usuarioInscribir = em.find(Usuario.class,usuario.getDni());
-		
+		   em.lock(eventoInscribir, LockModeType.OPTIMISTIC);
+                em.lock(usuarioInscribir,LockModeType.OPTIMISTIC);
 		Calendar calendar = Calendar.getInstance();
 		Timestamp fechaHoraActual = new Timestamp(calendar.getTime().getTime());
 		
@@ -167,7 +177,8 @@ public class EventoDAO {
 	@Transactional(propagation=Propagation.SUPPORTS, readOnly=true)
 	public boolean validarInvitadoLista(Evento evento, Usuario usuario) {
 		//Transaccion activa
-		Evento eventoInscribir = em.find(Evento.class,evento.getId());
+		
+                Evento eventoInscribir = em.find(Evento.class,evento.getId());
 		Usuario usuarioInscribir = em.find(Usuario.class,usuario.getDni());
 		List<Evento> eventoBuscado = null;
 		

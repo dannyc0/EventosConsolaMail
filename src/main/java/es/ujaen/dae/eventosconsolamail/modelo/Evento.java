@@ -19,6 +19,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
 @Entity
 public class Evento implements Serializable{
@@ -46,6 +47,8 @@ public class Evento implements Serializable{
 	@JoinTable(name = "evento_invitado", joinColumns = @JoinColumn(name = "evento_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "invitado_dni", referencedColumnName = "dni"))
 	public List<Usuario> listaInvitados;
 	
+        @Version
+        private int  version;
 	public Evento() {
 		listaEspera = new TreeMap<>();
 		listaInvitados = new ArrayList<>();

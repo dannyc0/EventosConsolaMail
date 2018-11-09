@@ -1,20 +1,14 @@
 package es.ujaen.dae.eventosconsolamail.dao;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.ujaen.dae.eventosconsolamail.exception.ErrorCreacionEvento;
-import es.ujaen.dae.eventosconsolamail.modelo.Evento;
 import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 
 @Repository
