@@ -23,6 +23,8 @@ import es.ujaen.dae.eventosconsolamail.exception.UsuarioNoRegistradoNoEncontrado
 import es.ujaen.dae.eventosconsolamail.modelo.Evento;
 import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 import es.ujaen.dae.eventosconsolamail.servicio.OrganizadoraEventosService;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 
 @Component
 public class OrganizadoraEventosImp implements OrganizadoraEventosService {
@@ -40,8 +42,12 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService {
 
 	@Autowired
 	UsuarioDAO usuarioDAO;
-
-	public OrganizadoraEventosImp() {
+        
+        @Autowired
+        public JavaMailSender emailSender;       
+        
+                
+    	public OrganizadoraEventosImp() {
 		usuarios = new TreeMap<>();
 		eventos = new TreeMap<>();
 		usuariosTokens = new Hashtable<>();
@@ -176,7 +182,13 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService {
 					eventoDAO.cancelarInvitado(evento, usuarioCancela);
 					eventoDAO.sacarDeListaDeEspera(datosListaEspera, evento);
 					eventoDAO.inscribirInvitado(evento, usuarioEntra);
-
+                                        SimpleMailMessage mensaje = new SimpleMailMessage();
+                                        mensaje.setTo(usuarioEntra.getCorreo());
+                                        mensaje.setSubject("Has sido aceptado en un evento");
+                                        String textoMensaje= "Enhorabuena! Ha sido aceptado para la actividad "+ evento.getNombre()+ " a celebrar el día \n" 
+                                                               +evento.getFecha()+" en " +evento.getLugar()+". Entra en tu cuenta de Organizadora de Eventos para obtener más \n" +"información.” ";
+                                        mensaje.setText(textoMensaje);
+                                        emailSender.send(mensaje);
 				} else {
 					throw new CancelacionInvalidaException();
 				}
