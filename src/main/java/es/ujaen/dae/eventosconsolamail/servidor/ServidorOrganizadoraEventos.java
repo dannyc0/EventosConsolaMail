@@ -16,16 +16,16 @@ import org.springframework.cache.annotation.EnableCaching;
 @EnableAutoConfiguration
 @EnableConfigurationProperties
 @EnableCaching
-@ComponentScan({ "es.ujaen.dae.eventosconsolamail.bean", "es.ujaen.dae.eventosconsolamail.dao" })
-@EntityScan(basePackages = { "es.ujaen.dae.eventosconsolamail.modelo" })
+@ComponentScan({"es.ujaen.dae.eventosconsolamail.bean", "es.ujaen.dae.eventosconsolamail.dao"})
+@EntityScan(basePackages = {"es.ujaen.dae.eventosconsolamail.modelo"})
 @SpringBootApplication
 public class ServidorOrganizadoraEventos {
 
-	public static void main(String[] args) throws IOException {
-		SpringApplication servidor = new SpringApplication(ServidorOrganizadoraEventos.class);
-		ApplicationContext ctx = servidor.run(args);
+    public static void main(String[] args) throws IOException {
+        SpringApplication servidor = new SpringApplication(ServidorOrganizadoraEventos.class);
+        ApplicationContext ctx = servidor.run(args);
 
-		ClienteOrganizadoraEventos cliente = new ClienteOrganizadoraEventos(ctx);
-		cliente.run();
-	}
+        ClienteOrganizadoraEventos cliente = new ClienteOrganizadoraEventos(ctx);
+        cliente.run();
+    }
 }

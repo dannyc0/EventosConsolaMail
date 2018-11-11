@@ -11,7 +11,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class CancelacionInvalidaException extends RuntimeException {
 
-	public CancelacionInvalidaException() {
-	}
+    public CancelacionInvalidaException() {
+    }
 
 }

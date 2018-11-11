@@ -11,7 +11,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class FechaInvalidaException extends Exception {
 
-	public FechaInvalidaException() {
-	}
+    public FechaInvalidaException() {
+    }
 
 }

@@ -11,7 +11,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class ErrorBorradoEvento extends RuntimeException {
 
-	public ErrorBorradoEvento() {
-	}
+    public ErrorBorradoEvento() {
+    }
 
 }

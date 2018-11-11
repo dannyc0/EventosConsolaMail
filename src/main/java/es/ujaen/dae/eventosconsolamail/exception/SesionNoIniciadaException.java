@@ -11,7 +11,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class SesionNoIniciadaException extends Exception {
 
-	public SesionNoIniciadaException() {
-	}
+    public SesionNoIniciadaException() {
+    }
 
 }

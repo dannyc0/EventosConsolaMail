@@ -11,8 +11,8 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class CamposVaciosException extends Exception {
 
-	public CamposVaciosException() {
-		super();
-	}
+    public CamposVaciosException() {
+        super();
+    }
 
 }

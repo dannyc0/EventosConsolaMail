@@ -11,7 +11,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class InscripcionInvalidaException extends RuntimeException {
 
-	public InscripcionInvalidaException() {
-	}
+    public InscripcionInvalidaException() {
+    }
 
 }

@@ -1,68 +1,66 @@
 package es.ujaen.dae.eventosconsolamail.dto;
 
-import java.util.Map;
-
-import es.ujaen.dae.eventosconsolamail.modelo.Evento;
 import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 
 public class UsuarioDTO {
-	String dni;
-	String nombre;
-	String correo;
-	String telefono;
 
-	public UsuarioDTO() {
-	}
+    String dni;
+    String nombre;
+    String correo;
+    String telefono;
 
-	public UsuarioDTO(String dni, String nombre, String correo, String telefono) {
-		this.dni = dni;
-		this.nombre = nombre;
-		this.correo = correo;
-		this.telefono = telefono;
-	}
+    public UsuarioDTO() {
+    }
 
-	public UsuarioDTO(Usuario usuario) {
-		this.dni = usuario.getDni();
-		this.nombre = usuario.getNombre();
-		this.correo = usuario.getCorreo();
-		this.telefono = usuario.getTelefono();
+    public UsuarioDTO(String dni, String nombre, String correo, String telefono) {
+        this.dni = dni;
+        this.nombre = nombre;
+        this.correo = correo;
+        this.telefono = telefono;
+    }
 
-	}
+    public UsuarioDTO(Usuario usuario) {
+        this.dni = usuario.getDni();
+        this.nombre = usuario.getNombre();
+        this.correo = usuario.getCorreo();
+        this.telefono = usuario.getTelefono();
 
-	public String getDni() {
-		return dni;
-	}
+    }
 
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
+    public String getDni() {
+        return dni;
+    }
 
-	public String getNombre() {
-		return nombre;
-	}
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public String getCorreo() {
-		return correo;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
+    public String getCorreo() {
+        return correo;
+    }
 
-	public String getTelefono() {
-		return telefono;
-	}
+    public void setCorreo(String correo) {
+        this.correo = correo;
+    }
 
-	public void setTelefono(String telefono) {
-		this.telefono = telefono;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public Usuario toEntity() {
-		Usuario usuario = new Usuario();
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public Usuario toEntity() {
+        Usuario usuario = new Usuario();
 //        if(this.eventoDTO!=null) {
 //        	Evento evento = new Evento();
 //		    evento.setId(this.eventoDTO.getId());
@@ -74,11 +72,11 @@ public class UsuarioDTO {
 //		    evento.setCupo(this.eventoDTO.getCupo());
 //        
 //        }
-		usuario.setDni(dni);
-		usuario.setNombre(nombre);
-		usuario.setCorreo(correo);
-		usuario.setTelefono(telefono);
+        usuario.setDni(dni);
+        usuario.setNombre(nombre);
+        usuario.setCorreo(correo);
+        usuario.setTelefono(telefono);
 
-		return usuario;
-	}
+        return usuario;
+    }
 }

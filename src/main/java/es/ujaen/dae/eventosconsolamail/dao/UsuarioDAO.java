@@ -14,37 +14,37 @@ import es.ujaen.dae.eventosconsolamail.modelo.Usuario;
 @Transactional(propagation = Propagation.REQUIRED)
 public class UsuarioDAO {
 
-	@PersistenceContext
-	EntityManager em;
+    @PersistenceContext
+    EntityManager em;
 
-	public UsuarioDAO() {
-	}
+    public UsuarioDAO() {
+    }
 
-	// Buscar evento
-	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-	public Usuario buscar(String dni) {
+    // Buscar evento
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Usuario buscar(String dni) {
 
-		return em.find(Usuario.class, dni);
-	}
+        return em.find(Usuario.class, dni);
+    }
 
-	// Crear evento
-	public void insertar(Usuario usuario) {
-		try {
-			em.persist(usuario);
-			em.flush();
-		} catch (Exception e) {
-			throw new ErrorCreacionEvento();
-		}
-	}
+    // Crear evento
+    public void insertar(Usuario usuario) {
+        try {
+            em.persist(usuario);
+            em.flush();
+        } catch (Exception e) {
+            throw new ErrorCreacionEvento();
+        }
+    }
 
-	// Actualizar evento
-	public void actualizar(Usuario usuario) {
-		em.merge(usuario);
-	}
+    // Actualizar evento
+    public void actualizar(Usuario usuario) {
+        em.merge(usuario);
+    }
 
-	// Borrar evento
-	public void borrar(Usuario usuario) {
-		em.remove(em.merge(usuario));
-	}
+    // Borrar evento
+    public void borrar(Usuario usuario) {
+        em.remove(em.merge(usuario));
+    }
 
 }
