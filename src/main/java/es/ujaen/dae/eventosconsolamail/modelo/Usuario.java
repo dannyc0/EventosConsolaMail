@@ -19,30 +19,30 @@ import javax.persistence.Version;
 
 @Entity
 public class Usuario implements Serializable {
-    
+
 	@Id
 	String dni;
 	String nombre;
 	String correo;
 	String telefono;
 	String password;
-	
-	@OneToMany(mappedBy="organizador",fetch=FetchType.LAZY)
+
+	@OneToMany(mappedBy = "organizador", fetch = FetchType.LAZY)
 	public List<Evento> eventosOrganizados;
-        
-    @ManyToMany(mappedBy="listaEspera")
-    public List<Evento> eventosEspera;
-        
-    @ManyToMany(mappedBy="listaInvitados")
+
+	@ManyToMany(mappedBy = "listaEspera")
+	public List<Evento> eventosEspera;
+
+	@ManyToMany(mappedBy = "listaInvitados")
 	public List<Evento> eventosInvitado;
-    
-    @Version
-    private int versionu;
-    
+
+	@Version
+	private int versionu;
+
 	public Usuario() {
-		eventosOrganizados= new ArrayList<>();
-		eventosEspera= new ArrayList<>();
-		eventosInvitado= new ArrayList<>();
+		eventosOrganizados = new ArrayList<>();
+		eventosEspera = new ArrayList<>();
+		eventosInvitado = new ArrayList<>();
 	}
 
 	public Usuario(String dni, String nombre, String correo, String telefono, String password) {
@@ -51,9 +51,9 @@ public class Usuario implements Serializable {
 		this.correo = correo;
 		this.telefono = telefono;
 		this.password = password;
-		eventosOrganizados=new ArrayList<>();
-		eventosEspera=new ArrayList<>();
-		eventosInvitado=new ArrayList<>();
+		eventosOrganizados = new ArrayList<>();
+		eventosEspera = new ArrayList<>();
+		eventosInvitado = new ArrayList<>();
 	}
 
 	public String getDni() {
@@ -95,7 +95,7 @@ public class Usuario implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public List<Evento> getEventosOrganizados() {
 		return eventosOrganizados;
 	}
@@ -126,6 +126,5 @@ public class Usuario implements Serializable {
 				+ ", password=" + password + ", eventosOrganizados=" + eventosOrganizados + ", eventosEspera="
 				+ eventosEspera + ", eventosInvitado=" + eventosInvitado + "]";
 	}
-	
-	
+
 }

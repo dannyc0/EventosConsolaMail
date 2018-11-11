@@ -11,7 +11,7 @@ package es.ujaen.dae.eventosconsolamail.exception;
  */
 public class ErrorCreacionEvento extends RuntimeException {
 
-    public ErrorCreacionEvento() {
-    }
+	public ErrorCreacionEvento() {
+	}
 
 }

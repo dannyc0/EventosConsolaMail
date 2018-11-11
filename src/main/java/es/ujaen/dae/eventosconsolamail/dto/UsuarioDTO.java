@@ -10,23 +10,25 @@ public class UsuarioDTO {
 	String nombre;
 	String correo;
 	String telefono;
-	
-	public UsuarioDTO() {}
-	
+
+	public UsuarioDTO() {
+	}
+
 	public UsuarioDTO(String dni, String nombre, String correo, String telefono) {
 		this.dni = dni;
 		this.nombre = nombre;
 		this.correo = correo;
 		this.telefono = telefono;
 	}
-	
+
 	public UsuarioDTO(Usuario usuario) {
-		this.dni=usuario.getDni();
-		this.nombre =usuario.getNombre();
-		this.correo=usuario.getCorreo();
-		this.telefono=usuario.getTelefono();
-	
+		this.dni = usuario.getDni();
+		this.nombre = usuario.getNombre();
+		this.correo = usuario.getCorreo();
+		this.telefono = usuario.getTelefono();
+
 	}
+
 	public String getDni() {
 		return dni;
 	}
@@ -60,7 +62,7 @@ public class UsuarioDTO {
 	}
 
 	public Usuario toEntity() {
-        Usuario usuario = new Usuario();
+		Usuario usuario = new Usuario();
 //        if(this.eventoDTO!=null) {
 //        	Evento evento = new Evento();
 //		    evento.setId(this.eventoDTO.getId());
@@ -72,11 +74,11 @@ public class UsuarioDTO {
 //		    evento.setCupo(this.eventoDTO.getCupo());
 //        
 //        }
-        usuario.setDni(dni);
-        usuario.setNombre(nombre);
-        usuario.setCorreo(correo);
-        usuario.setTelefono(telefono);
-        
-        return usuario;
+		usuario.setDni(dni);
+		usuario.setNombre(nombre);
+		usuario.setCorreo(correo);
+		usuario.setTelefono(telefono);
+
+		return usuario;
 	}
 }

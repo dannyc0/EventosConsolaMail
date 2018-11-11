@@ -14,25 +14,25 @@ public class EventoDTO {
 	String fecha;
 	String tipo;
 	int cupo;
-	
+
 	UsuarioDTO organizador;
-	
+
 	public EventoDTO() {
 
 	}
-	
-	public EventoDTO (Evento evento) {
-        this.id =evento.getId();
-        this.nombre =evento.getNombre();
-        this.descripcion =evento.getDescripcion();
-        this.lugar = evento.getLugar();
-        this.fecha = evento.getFecha();
-        this.tipo = evento.getTipo();
-        this.cupo = evento.getCupo();
-        
-        //this.organizador= new UsuarioDTO(evento.getOrganizador());
+
+	public EventoDTO(Evento evento) {
+		this.id = evento.getId();
+		this.nombre = evento.getNombre();
+		this.descripcion = evento.getDescripcion();
+		this.lugar = evento.getLugar();
+		this.fecha = evento.getFecha();
+		this.tipo = evento.getTipo();
+		this.cupo = evento.getCupo();
+
+		// this.organizador= new UsuarioDTO(evento.getOrganizador());
 	}
-	
+
 	public EventoDTO(int id, String nombre, String descripcion, String lugar, String fecha, String tipo, int cupo) {
 		this.id = id;
 		this.nombre = nombre;
@@ -41,9 +41,9 @@ public class EventoDTO {
 		this.fecha = fecha;
 		this.tipo = tipo;
 		this.cupo = cupo;
-		//this.organizador = usuario;
+		// this.organizador = usuario;
 	}
-	
+
 	public EventoDTO(String nombre, String descripcion, String lugar, String fecha, String tipo, int cupo) {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
@@ -108,20 +108,20 @@ public class EventoDTO {
 	public void setCupo(int cupo) {
 		this.cupo = cupo;
 	}
-	
+
 	public Evento toEntity() {
-        Evento evento = new Evento();
-        evento.setId(id);
-        evento.setNombre(nombre);
-        evento.setDescripcion(descripcion);
-        evento.setLugar(lugar);
-        evento.setFecha(fecha);
-        evento.setTipo(tipo);
-        evento.setCupo(cupo);
-        if(organizador!=null) {
-        	evento.setOrganizador(organizador.toEntity());
-        }
-        return evento;
+		Evento evento = new Evento();
+		evento.setId(id);
+		evento.setNombre(nombre);
+		evento.setDescripcion(descripcion);
+		evento.setLugar(lugar);
+		evento.setFecha(fecha);
+		evento.setTipo(tipo);
+		evento.setCupo(cupo);
+		if (organizador != null) {
+			evento.setOrganizador(organizador.toEntity());
+		}
+		return evento;
 	}
-	
+
 }
