@@ -185,8 +185,8 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService {
                                         SimpleMailMessage mensaje = new SimpleMailMessage();
                                         mensaje.setTo(usuarioEntra.getCorreo());
                                         mensaje.setSubject("Has sido aceptado en un evento");
-                                        String textoMensaje= "Enhorabuena! Ha sido aceptado para la actividad "+ evento.getNombre()+ " a celebrar el día \n" 
-                                                               +evento.getFecha()+" en " +evento.getLugar()+". Entra en tu cuenta de Organizadora de Eventos para obtener más \n" +"información.” ";
+                                        String textoMensaje= "Enhorabuena! Has sido aceptado para la actividad <b>"+ evento.getNombre()+ "</b> a celebrar el día \n <b>" 
+                                                               +evento.getFecha()+"</b> en <b>" +evento.getLugar()+"</b>. Entra en tu cuenta de <b>Organizadora de Eventos</b> para obtener más \n" +"información.";
                                         mensaje.setText(textoMensaje);
                                         emailSender.send(mensaje);
 				} else {
