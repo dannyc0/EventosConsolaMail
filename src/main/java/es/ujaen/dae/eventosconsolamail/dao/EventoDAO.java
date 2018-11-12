@@ -81,7 +81,7 @@ public class EventoDAO {
 
     // Inscribir lista invitado
     public void inscribirInvitado(Evento evento, Usuario usuario) {
-        // Transaccion activa
+        // Transaccion activa, si se necesitabuscar
         Evento eventoInscribir = em.find(Evento.class, evento.getId());
         Usuario usuarioInscribir = em.find(Usuario.class, usuario.getDni());
         em.lock(eventoInscribir, LockModeType.OPTIMISTIC);
@@ -91,7 +91,7 @@ public class EventoDAO {
 
     // Cancelar de lista invitado
     public void cancelarInvitado(Evento evento, Usuario usuario) {
-        // Transaccion activa
+        // Transaccion activa, si se necesitabuscar
 
         Evento eventoInscribir = em.find(Evento.class, evento.getId());
         Usuario usuarioInscribir = em.find(Usuario.class, usuario.getDni());
@@ -104,7 +104,7 @@ public class EventoDAO {
     // Obtener quien es el siguiente de la lista de espera
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Object[] obtenerSiguienteDeListaEspera(Evento evento) {
-        // Transaccion activa
+        // Transaccion activa, si se necesitabuscar
 
         Evento eventoEspera = em.find(Evento.class, evento.getId());
         Object[] datosMap = null;
@@ -113,7 +113,7 @@ public class EventoDAO {
                     "SELECT KEY(map), VALUE(map).dni FROM Evento e INNER JOIN e.listaEspera map WHERE e.id = :id ORDER BY KEY(map) ASC",
                     Object[].class).setParameter("id", eventoEspera.getId()).setMaxResults(1).getSingleResult();
         } catch (Exception e) {
-            System.out.println("Error");
+           
         }
 
         return datosMap;
@@ -134,7 +134,7 @@ public class EventoDAO {
                     .setMaxResults(1).getSingleResult();
 
         } catch (Exception e) {
-            System.out.println("Error");
+            
         }
 
         return datosMap;
@@ -214,16 +214,15 @@ public class EventoDAO {
     public List<Evento> listarEventoEspera(Usuario usuario) {
         // Transaccion activa
         Usuario usuarioEspera = em.find(Usuario.class, usuario.getDni());
-        List<Evento> eventoBuscado = null;
-
-        try {
-            eventoBuscado = em
-                    .createQuery("SELECT e FROM Evento e INNER JOIN e.listaEspera l WHERE l.dni = :dni", Evento.class)
-                    .setParameter("dni", usuarioEspera.getDni()).getResultList();
-        } catch (Exception e) {
-        }
-
-        return eventoBuscado;
+        usuarioEspera.getEventosEspera().size();
+//        List<Evento> eventoBuscado = null;
+//        try {
+//            eventoBuscado = em
+//                    .createQuery("SELECT e FROM Evento e INNER JOIN e.listaEspera l WHERE l.dni = :dni", Evento.class)
+//                    .setParameter("dni", usuarioEspera.getDni()).getResultList();
+//        } catch (Exception e) {
+//        }
+        return usuarioEspera.getEventosEspera();
     }
 
     // Lista de eventos inscritos
@@ -232,15 +231,15 @@ public class EventoDAO {
     public List<Evento> listarEventoInscrito(Usuario usuario) {
         // Transaccion activa
         Usuario usuarioInscribir = em.find(Usuario.class, usuario.getDni());
-        List<Evento> eventoBuscado = null;
+        usuarioInscribir.getEventosInvitado().size();
+//        List<Evento> eventoBuscado = null;
+//        try {
+//            eventoBuscado = em.createQuery("SELECT e FROM Evento e INNER JOIN e.listaInvitados l WHERE l.dni = :dni",
+//                    Evento.class).setParameter("dni", usuarioInscribir.getDni()).getResultList();
+//        } catch (Exception e) {
+//        }
 
-        try {
-            eventoBuscado = em.createQuery("SELECT e FROM Evento e INNER JOIN e.listaInvitados l WHERE l.dni = :dni",
-                    Evento.class).setParameter("dni", usuarioInscribir.getDni()).getResultList();
-        } catch (Exception e) {
-        }
-
-        return eventoBuscado;
+        return usuarioInscribir.getEventosInvitado();
     }
 
     // Lista de eventos organizados
@@ -249,15 +248,14 @@ public class EventoDAO {
     public List<Evento> listarEventoOrganizado(Usuario usuario) {
         // Transaccion activa
         Usuario organizador = em.find(Usuario.class, usuario.getDni());
-        List<Evento> eventoBuscado = null;
-
-        try {
-            eventoBuscado = em.createQuery("SELECT e FROM Evento e WHERE e.organizador = :organizador", Evento.class)
-                    .setParameter("organizador", organizador).getResultList();
-        } catch (Exception e) {
-        }
-
-        return eventoBuscado;
+        organizador.getEventosOrganizados().size();
+//        List<Evento> eventoBuscado = null;
+//        try {
+//            eventoBuscado = em.createQuery("SELECT e FROM Evento e WHERE e.organizador = :organizador", Evento.class)
+//                    .setParameter("organizador", organizador).getResultList();
+//        } catch (Exception e) {
+//        }
+        return organizador.getEventosOrganizados();
     }
 
 }
