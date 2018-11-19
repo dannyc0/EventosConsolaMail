@@ -178,18 +178,21 @@ public class OrganizadoraEventosImp implements OrganizadoraEventosService {
                 // Valida que no se haya celebrado aun el evento
                 if (eventoDAO.buscar(evento.getId()).compararConFechaActual()) {
                     Object[] datosListaEspera = eventoDAO.obtenerSiguienteDeListaEspera(evento);
-                    Usuario usuarioEntra = usuarioDAO.buscar(datosListaEspera[1].toString());
-
+                    
+                    if(datosListaEspera!=null) {
+                    	Usuario usuarioEntra = usuarioDAO.buscar(datosListaEspera[1].toString());
+                    	eventoDAO.sacarDeListaDeEspera(datosListaEspera, evento);
+                    	eventoDAO.inscribirInvitado(evento, usuarioEntra);
+                    	SimpleMailMessage mensaje = new SimpleMailMessage();
+                        mensaje.setTo(usuarioEntra.getCorreo());
+                        mensaje.setSubject("Has sido aceptado en un evento");
+                        String textoMensaje = "Enhorabuena! Has sido aceptado para la actividad " + evento.getNombre() + " a celebrar el día \n"
+                                + evento.getFecha() + " en " + evento.getLugar() + ". Entra en tu cuenta de Organizadora de Eventos para obtener más \n" + "información. ";
+                        mensaje.setText(textoMensaje);
+                        emailSender.send(mensaje);
+                    }
                     eventoDAO.cancelarInvitado(evento, usuarioCancela);
-                    eventoDAO.sacarDeListaDeEspera(datosListaEspera, evento);
-                    eventoDAO.inscribirInvitado(evento, usuarioEntra);
-                    SimpleMailMessage mensaje = new SimpleMailMessage();
-                    mensaje.setTo(usuarioEntra.getCorreo());
-                    mensaje.setSubject("Has sido aceptado en un evento");
-                    String textoMensaje = "Enhorabuena! Has sido aceptado para la actividad " + evento.getNombre() + " a celebrar el día \n"
-                            + evento.getFecha() + " en " + evento.getLugar() + ". Entra en tu cuenta de Organizadora de Eventos para obtener más \n" + "información. ";
-                    mensaje.setText(textoMensaje);
-                    emailSender.send(mensaje);
+                    
                 } else {
                     throw new CancelacionInvalidaException();
                 }

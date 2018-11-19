@@ -61,17 +61,11 @@ public class EventoDAO {
     // Crear evento
     public void insertar(Evento evento) {
         try {
-
             em.persist(evento);
             em.flush();
         } catch (Exception e) {
             throw new ErrorCreacionEvento();
         }
-    }
-
-    // Actualizar evento
-    public void actualizar(Evento evento) {
-        em.merge(evento);
     }
 
     // Borrar evento
@@ -215,13 +209,6 @@ public class EventoDAO {
         // Transaccion activa
         Usuario usuarioEspera = em.find(Usuario.class, usuario.getDni());
         usuarioEspera.getEventosEspera().size();
-//        List<Evento> eventoBuscado = null;
-//        try {
-//            eventoBuscado = em
-//                    .createQuery("SELECT e FROM Evento e INNER JOIN e.listaEspera l WHERE l.dni = :dni", Evento.class)
-//                    .setParameter("dni", usuarioEspera.getDni()).getResultList();
-//        } catch (Exception e) {
-//        }
         return usuarioEspera.getEventosEspera();
     }
 
@@ -232,13 +219,6 @@ public class EventoDAO {
         // Transaccion activa
         Usuario usuarioInscribir = em.find(Usuario.class, usuario.getDni());
         usuarioInscribir.getEventosInvitado().size();
-//        List<Evento> eventoBuscado = null;
-//        try {
-//            eventoBuscado = em.createQuery("SELECT e FROM Evento e INNER JOIN e.listaInvitados l WHERE l.dni = :dni",
-//                    Evento.class).setParameter("dni", usuarioInscribir.getDni()).getResultList();
-//        } catch (Exception e) {
-//        }
-
         return usuarioInscribir.getEventosInvitado();
     }
 
@@ -249,12 +229,6 @@ public class EventoDAO {
         // Transaccion activa
         Usuario organizador = em.find(Usuario.class, usuario.getDni());
         organizador.getEventosOrganizados().size();
-//        List<Evento> eventoBuscado = null;
-//        try {
-//            eventoBuscado = em.createQuery("SELECT e FROM Evento e WHERE e.organizador = :organizador", Evento.class)
-//                    .setParameter("organizador", organizador).getResultList();
-//        } catch (Exception e) {
-//        }
         return organizador.getEventosOrganizados();
     }
 
